@@ -1,0 +1,85 @@
+D3.js
+
+D3 draws into a SVG (like a canvas).
+
+Selecting elements : 
+  Select 1 element with element tag rect
+ 	d3.select(“rect”)
+   Select 1 element with element Id “center” in Dom
+	d3.select(“#center”)
+   Select all elements with class “outside” in dom
+	d3.selectAll(“.outside”)
+
+D3 Append: 
+  index.html -> <svg id=“canvas” width=“400” height=“60></svg>
+  Appending Rectangle : 
+	const svg = d3.select(“#canvas”)
+	const rect = svg.append(“rect”)
+  Adding Attr : 
+	rect.attr(“x”,25)
+	rect.attr(“y”,0)
+	rect.attr(“height”,200),
+	rect.attr(“width”,50),
+	rect.attr(“fill”,”red”)	
+
+Selections with Data joins:
+	const data = [20,24,25,45,35]
+	const svg = d3.select(“#chart-area”).append(“svg”).attr(“width”,500).attr(“height”,500)
+	svg.selectAll(“circle”).data(data).enter().append(“circle”).attr(“cx”,100).attr(“cy”,250).attr(“r”,70).attr(“fill”,”red”)
+
+Selection with Data Joins (Dynamic values from data):
+	const data = [25,56,54,78,45,12]
+	//Create a canvas
+	const svg = d3.select(“#some-el”).append(“svg”).attr(“width”,500).attr(“height”,500);
+	//now add multiple circles inside canvas dynamically
+	svg.selectAll(“circle”).data(data).enter().append(“circle”)
+	.attr(“cx”,(d,i) => { 
+		return (50*I)+50
+	}).attr(“cy”,(d,i) => (50*i)+50)
+	.attr(“r”,(d)=>d)
+	.attr(“fill”,”red”)
+
+Loading external data : 
+	csv (comma separated) , tsp (tab separated) , json 
+	d3.csv(“file location”).then(data => {})
+	d3.tsv(“file location”).then(data =>{})
+	d3.json(“file location”).then(data => {})
+
+	Note: D3 when loading the text files in any of the above format, you would get a Array of those data, but everything will be integer, so in order to get the required values in Number, you would have to run a forEach loop on array to change the value to number.
+
+Scaling in D3: 
+	D3 takes 2 values for scaling “domain” & “range”. And both of these takes a min and max value. Where domain is the actual data values we have in our data, and range is what our canvas can have a min and Max, D3 now will decide where the input value will be scalled down and show in the allowed range values. 
+	Example: If we have max value in our data be 800 and min is 0. so domain min is 0, domain max is 800, so now if we have canvas (generally a fixed value) of min as 0, and max as 400. Then when a data value of 800 comes into the canvas, now D3 will make sure this is the max of domain , so it will convert the 800 to 400 to fit in our canvas, Also if we pass 400 from domain, then since its middle value of the whole domain, then range will be equalled to 200 since 200 is middle of 400. D3 will do this for us. 
+
+	const y = d3.scaleLinear().domain([0,800]).range([0.400)]
+	y(data value) -> d3 will scale this as needed based on range values.
+
+
+Diffrent Types of scales : 
+* 	Linear Scale : const y = d3.scaleLinear().domain([min,max]).range([min,max])
+* 	Log Scale : const y = d3.scaleLog().domain([min,max]).range([min,max)].base(10)
+* 	Time Scales : Same as linear scale, but we pass domain values as Java Script date object instead of numbers.
+			const y = d3.scaleTime().domain([new Date(2000,0,1), new Date(2001,0,1)]).range([0,400)]
+* 	OrdinalSclae : const color = d3.scaleOrdinal().domain([“AFRICA”,”N. AMERICA”,”EUROPE”,”S. AMERICA”,”ASIA”,”AUSTRALIA”]).range([“RED”,”ORANGE”,YELLOW”,GREEN”,BLUE”,”GREEN”,”BLUE”,”INDIGO”,”GREY”])
+		//Ordinal scale is used when we need to assign colors to a category of data
+		//Color schemes -> d3.schemeCategory(10) or d3.schemeCategory20() or d3.schemeCategory20b() 
+* 	Band Scale (For horizontal scaling in x axis) const x = d3.scaleBand().domain([“AFRICA”,”ASIA”,”N. AMERICA”]).range([0,400])
+		.paddingInner(0.3).paddingOuter(0.2)
+		// Here x will be the starting value of x in px, but the width of that bar chart can be fetched with x.bandwidth
+
+Getting min & max values from data for domain in scaling :
+	d3.scaleLinear().domain([d3.min(data, d => d.value), d3.max(data, d =>d.value)].range([0,400])
+
+Geting Min and Max with extent for domain using d3:
+	d3.scaleLinear().domain([d3.extent(data, d => d.value])
+		.range([0,400])
+
+Getting String values on domain:
+	d3.scaleBand().domain(data.map(data => data.name)) //[“A”,”B”,”C”…]
+		.range([0,400]).paddingInner(0.3).paddingOutter(0.2)
+
+
+
+//import the code base into visual studio Code editor (IDE) //open terminal in the location of code base // run "npm install"
+
+
